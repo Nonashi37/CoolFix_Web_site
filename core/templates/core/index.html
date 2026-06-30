@@ -3,193 +3,330 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CoolFix</title>
+
+    <!-- ═══ PRIMARY SEO TAGS ═══ -->
+    <title>{{ t.meta_title }}</title>
+    <meta name="description" content="{{ t.meta_description }}" />
+    <meta name="keywords" content="ремонт холодильников Бишкек, ремонт кондиционеров Бишкек, ремонт холодильного оборудования, холодильные камеры, рефрижераторы, CoolFix" />
+
+    <!-- ═══ LOCAL SEO — tells Google exactly where you are ═══ -->
+    <meta name="geo.region" content="KG-GB" />
+    <meta name="geo.placename" content="Bishkek, Kyrgyzstan" />
+    <meta name="geo.position" content="42.8746;74.5698" />
+    <meta name="ICBM" content="42.8746, 74.5698" />
+
+    <!-- ═══ CANONICAL + HREFLANG — zero duplicate content penalty ═══ -->
+    {% if lang == 'ky' %}
+        <link rel="canonical" href="https://coolfix.kg/ky/" />
+    {% else %}
+        <link rel="canonical" href="https://coolfix.kg/" />
+    {% endif %}
+    <link rel="alternate" hreflang="ru"      href="https://coolfix.kg/" />
+    <link rel="alternate" hreflang="ky"      href="https://coolfix.kg/ky/" />
+    <link rel="alternate" hreflang="x-default" href="https://coolfix.kg/" />
+
+    <!-- ═══ OPEN GRAPH — social sharing ═══ -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:site_name"   content="CoolFix" />
+    <meta property="og:title"       content="{{ t.meta_title }}" />
+    <meta property="og:description" content="{{ t.meta_description }}" />
+    <meta property="og:url"         content="https://coolfix.kg/" />
+    <meta property="og:locale"      content="{% if lang == 'ky' %}ky_KG{% else %}ru_RU{% endif %}" />
+    <meta property="og:locale:alternate" content="{% if lang == 'ky' %}ru_RU{% else %}ky_KG{% endif %}" />
+
+    <!-- ═══ SCHEMA.ORG — LocalBusiness structured data ═══
+         This is what powers Google's "rich results" (star ratings,
+         hours, phone) directly in search results. High-impact, zero traffic needed. -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "CoolFix",
+        "description": "Профессиональный ремонт холодильников, морозильников, холодильных камер, рефрижераторов и кондиционеров в Бишкеке.",
+        "url": "https://coolfix.kg",
+        "telephone": "+996XXXXXXXXX",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "г. Бишкек",
+            "addressLocality": "Бишкек",
+            "addressRegion": "Чуйская область",
+            "addressCountry": "KG"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 42.8746,
+            "longitude": 74.5698
+        },
+        "openingHoursSpecification": [{
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+            "opens": "08:00",
+            "closes": "21:00"
+        }],
+        "priceRange": "$$",
+        "numberOfEmployees": { "@type": "QuantitativeValue", "value": 50 },
+        "foundingDate": "2022",
+        "areaServed": { "@type": "City", "name": "Bishkek" },
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Ремонт холодильного оборудования и кондиционеров",
+            "itemListElement": [
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ремонт холодильников в Бишкеке" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ремонт морозильников в Бишкеке" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ремонт холодильных камер в Бишкеке" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ремонт рефрижераторов в Бишкеке" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ремонт кондиционеров в Бишкеке" } }
+            ]
+        }
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-950 text-white font-sans antialiased">
+<body class="bg-white text-slate-800 font-sans antialiased">
 
-    <!-- ═══ LANGUAGE TOGGLE — fixed, frosted, unobtrusive ═══ -->
+    <!-- ═══ LANGUAGE TOGGLE ═══ -->
     <div class="fixed top-4 right-4 z-50">
         <a href="{% url 'set_language' t.lang_switch_code %}"
-           class="bg-white/10 backdrop-blur-md border border-white/20
-                  hover:bg-white/20 active:scale-95
+           class="bg-blue-600 hover:bg-blue-700 active:scale-95
                   text-white text-sm font-bold px-5 py-2 rounded-full
-                  transition-all duration-200 shadow-lg">
+                  transition-all duration-200 shadow-lg shadow-blue-900/30">
             {{ t.lang_switch_label }}
         </a>
     </div>
 
-    <!-- ═══════════════════ HERO ═══════════════════ -->
-    <section class="min-h-screen flex flex-col items-center justify-center px-4 text-center
-                    bg-gradient-to-b from-gray-900 to-gray-950">
+    <main id="main-content">
 
-        <span class="text-cyan-400 text-xs font-bold tracking-widest uppercase mb-6">
-            {{ t.hero_tagline }}
-        </span>
+        <!-- ═══════════════════ HERO ═══════════════════
+             bg-slate-900: dark fallback if image fails → "Cool" stays visible
+             ════════════════════════════════════════════ -->
+        <section aria-label="{{ t.brand_h1 }}"
+                 class="relative min-h-screen flex flex-col items-center justify-center
+                        px-4 text-center bg-slate-900"
+                 style="background-image: url('https://i.pinimg.com/1200x/03/fe/80/03fe80dbeeb576549154b2773565c796.jpg');
+                        background-size: cover; background-position: center;">
 
-        <h1 class="text-5xl md:text-7xl font-black mb-4 leading-tight">
-            Cool<span class="text-cyan-400">Fix</span>
-        </h1>
+            <div class="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-blue-950/35 to-slate-900/50"></div>
 
-        <p class="text-gray-400 text-lg md:text-xl max-w-xl mb-3">
-            {{ t.hero_subtitle }}
-        </p>
-        <p class="text-white font-bold text-xl mb-12">{{ t.hero_slogan }}</p>
+            <div class="relative z-10 w-full max-w-4xl mx-auto">
 
-        <!-- TODAY'S OPERATOR CARD -->
-        <div class="bg-gray-800 border border-cyan-500/50 rounded-2xl p-8 w-full max-w-sm
-                    shadow-2xl shadow-cyan-900/20">
-            <p class="text-cyan-400 text-xs font-bold tracking-widest uppercase mb-3">
-                {{ t.on_duty_label }}
-            </p>
+                <span class="inline-block text-sky-400 text-xs font-bold tracking-widest
+                             uppercase mb-6 bg-sky-400/10 border border-sky-400/30
+                             px-4 py-2 rounded-full">
+                    {{ t.hero_tagline }}
+                </span>
 
-            {% if today_schedule and today_schedule.operator %}
-                <p class="text-3xl font-black mb-6">{{ today_schedule.operator.name }}</p>
-                <a href="tel:{{ today_schedule.operator.phone }}"
-                   class="block w-full bg-cyan-400 hover:bg-cyan-300 active:scale-95
-                          text-gray-950 font-black text-xl py-4 rounded-xl
-                          transition-all duration-150 tracking-wide">
-                    {{ today_schedule.operator.phone }}
-                </a>
-            {% else %}
-                <p class="text-gray-500 text-lg">{{ t.no_operator }}</p>
-                <p class="text-gray-600 text-sm mt-2">{{ t.no_operator_sub }}</p>
-            {% endif %}
-        </div>
+                <!-- Brand mark — NOT the H1. Visual identity only. -->
+                <p class="text-5xl md:text-7xl font-black mb-4 leading-tight text-white"
+                   aria-hidden="true">
+                    Cool<span class="text-sky-400">Fix</span>
+                </p>
 
-        <a href="#stats" class="mt-16 text-gray-600 hover:text-gray-400 transition-colors text-sm">↓</a>
-    </section>
+                <!-- H1 = primary SEO keyword. Hidden visually but present for crawlers.
+                     Or style it as a subtitle — both work. -->
+                <h1 class="text-lg md:text-xl font-semibold text-slate-300 max-w-xl mx-auto mb-2">
+                    {{ t.brand_h1 }}
+                </h1>
 
-    <!-- ═══════════════════ STATS BAR ═══════════════════ -->
-    <section id="stats" class="py-20 px-4 bg-gray-900 border-y border-gray-800">
-        <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
+                <p class="text-slate-400 text-base md:text-lg max-w-xl mx-auto mb-2">
+                    {{ t.hero_subtitle }}
+                </p>
+                <p class="text-white font-bold text-xl mb-14">{{ t.hero_slogan }}</p>
 
-            <div>
-                <p class="text-6xl font-black text-cyan-400">50+</p>
-                <p class="text-gray-400 mt-3 text-lg font-medium">{{ t.stat_employees }}</p>
-            </div>
+                <!-- OPERATOR CARD -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/20
+                            rounded-2xl p-8 w-full max-w-sm mx-auto shadow-2xl">
+                    <p class="text-sky-400 text-xs font-bold tracking-widest uppercase mb-3">
+                        {{ t.on_duty_label }}
+                    </p>
 
-            <div class="border-y sm:border-y-0 sm:border-x border-gray-700 py-10 sm:py-0">
-                <p class="text-6xl font-black text-cyan-400">3+</p>
-                <p class="text-gray-400 mt-3 text-lg font-medium">{{ t.stat_years }}</p>
-            </div>
+                    {% if today_schedule and today_schedule.operator %}
+                        <p class="text-3xl font-black text-white mb-6">
+                            {{ today_schedule.operator.name }}
+                        </p>
+                        <a href="tel:{{ today_schedule.operator.phone }}"
+                           class="block w-full bg-sky-400 hover:bg-sky-300 active:scale-95
+                                  text-slate-900 font-black text-xl py-4 rounded-xl
+                                  transition-all duration-150 tracking-wide">
+                            {{ today_schedule.operator.phone }}
+                        </a>
 
-            <div>
-                <p class="text-6xl font-black text-cyan-400">150+</p>
-                <p class="text-gray-400 mt-3 text-lg font-medium">{{ t.stat_orders }}</p>
-            </div>
+                    {% else %}
+                        <!-- FALLBACK CTA — shows when no operator is assigned.
+                             High-converting: WhatsApp is dominant in Kyrgyzstan. -->
+                        <p class="text-slate-300 text-sm mb-1">{{ t.no_operator }}</p>
+                        <p class="text-slate-500 text-xs mb-5">{{ t.no_operator_sub }}</p>
 
-        </div>
-    </section>
+                        <a href="tel:{{ t.fallback_phone }}"
+                           class="block w-full bg-sky-400 hover:bg-sky-300 active:scale-95
+                                  text-slate-900 font-black text-xl py-4 rounded-xl mb-3
+                                  transition-all duration-150">
+                            📞 {{ t.fallback_phone }}
+                        </a>
 
-    <!-- ═══════════════════ SERVICES ═══════════════════ -->
-    <section id="services" class="py-24 px-4">
-        <div class="max-w-5xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-black text-center mb-2">
-                {{ t.services_title }} <span class="text-cyan-400">{{ t.services_title_hl }}</span>
-            </h2>
-            <p class="text-gray-500 text-center mb-12">{{ t.services_sub }}</p>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {% for service in services %}
-                <div class="bg-gray-800 border border-gray-700 hover:border-cyan-500/50
-                            rounded-2xl p-6 text-center transition-all duration-200">
-                    <div class="text-5xl mb-4">{{ service.icon }}</div>
-                    <h3 class="font-bold text-white text-lg mb-1">{{ service.title }}</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">{{ service.desc }}</p>
+                        <a href="https://wa.me/996XXXXXXXXX?text={{ t.fallback_whatsapp_text|urlencode }}"
+                           target="_blank" rel="noopener"
+                           class="block w-full bg-green-500 hover:bg-green-400 active:scale-95
+                                  text-white font-bold text-base py-3 rounded-xl
+                                  transition-all duration-150">
+                            {{ t.fallback_whatsapp_label }}
+                        </a>
+                    {% endif %}
                 </div>
-                {% endfor %}
             </div>
-        </div>
-    </section>
 
-    <!-- ═══════════════════ WHY US ═══════════════════ -->
-    <section class="py-24 px-4 bg-gray-900">
-        <div class="max-w-5xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-black text-center mb-12">
-                {{ t.why_title }} <span class="text-cyan-400">{{ t.why_title_hl }}</span>
-            </h2>
+            <a href="#stats"
+               class="absolute bottom-8 left-1/2 -translate-x-1/2
+                      text-slate-500 hover:text-slate-300 transition-colors animate-bounce">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </a>
+        </section>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {% for item in t.why_items %}
-                <div class="bg-gray-800 border border-gray-700 hover:border-cyan-500/30
-                            rounded-2xl p-6 transition-all duration-200">
-                    <div class="text-4xl mb-3">{{ item.icon }}</div>
-                    <h3 class="font-bold text-white text-lg mb-2">{{ item.title }}</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">{{ item.desc }}</p>
+        <!-- ═══════════════════ STATS ═══════════════════ -->
+        <section id="stats" aria-label="Достижения компании" class="py-20 px-4 bg-blue-600">
+            <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
+                <div>
+                    <p class="text-6xl md:text-7xl font-black text-white">50+</p>
+                    <p class="text-blue-100 mt-3 text-lg font-medium">{{ t.stat_employees }}</p>
                 </div>
-                {% endfor %}
+                <div class="border-y sm:border-y-0 sm:border-x border-blue-500 py-10 sm:py-0">
+                    <p class="text-6xl md:text-7xl font-black text-white">3+</p>
+                    <p class="text-blue-100 mt-3 text-lg font-medium">{{ t.stat_years }}</p>
+                </div>
+                <div>
+                    <p class="text-6xl md:text-7xl font-black text-white">150+</p>
+                    <p class="text-blue-100 mt-3 text-lg font-medium">{{ t.stat_orders }}</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- ═══════════════════ WEEKLY SCHEDULE ═══════════════════ -->
-    <section class="py-24 px-4">
-        <div class="max-w-3xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-black text-center mb-2">
-                {{ t.schedule_title }} <span class="text-cyan-400">{{ t.schedule_title_hl }}</span>
-            </h2>
-            <p class="text-gray-500 text-center mb-12">{{ t.schedule_sub }}</p>
+        <!-- ═══════════════════ SERVICES — PHOTO CARDS ═══════════════════ -->
+        <section id="services"
+                 aria-label="{{ t.services_h2 }}"
+                 class="py-24 px-4 bg-white">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-black text-center mb-2 text-slate-800">
+                    {{ t.services_h2 }}
+                </h2>
+                <p class="text-slate-500 text-center mb-12">{{ t.services_sub }}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {% for service in services %}
+                    <a href="{% url service_url_name service.slug %}"
+                    class="relative overflow-hidden rounded-2xl shadow-xl group h-64 md:h-72 block">
+                        <img src="{{ service.img }}" alt="{{ service.seo_alt }}"
+                            loading="lazy" decoding="async"
+                            onerror="this.parentElement.style.background='#1e293b'"
+                            class="absolute inset-0 w-full h-full object-cover
+                                    transition-transform duration-700 ease-out group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/40 to-transparent"></div>
+                        <div class="absolute inset-x-0 bottom-0 p-6">
+                            <div class="text-3xl mb-2">{{ service.icon }}</div>
+                            <h3 class="text-white font-black text-xl leading-tight mb-1">{{ service.title }}</h3>
+                            <p class="text-slate-300 text-sm">{{ service.desc }}</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
 
-            <div class="bg-gray-800 rounded-2xl overflow-hidden border border-gray-700">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-gray-900 border-b border-gray-700">
-                            <th class="py-4 px-6 text-left text-cyan-400 text-xs font-bold tracking-widest uppercase">
-                                {{ t.col_day }}
-                            </th>
-                            <th class="py-4 px-6 text-left text-cyan-400 text-xs font-bold tracking-widest uppercase">
-                                {{ t.col_operator }}
-                            </th>
-                            <th class="py-4 px-6 text-left text-cyan-400 text-xs font-bold tracking-widest uppercase hidden sm:table-cell">
-                                {{ t.col_phone }}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for schedule in schedules %}
-                        <tr class="border-b border-gray-700/40 last:border-0 transition-colors
-                                   {% if schedule.day_of_week == today_num %}bg-cyan-950/60{% else %}hover:bg-gray-700/30{% endif %}">
+        <!-- ═══════════════════ WHY US ═══════════════════ -->
+        <section aria-label="{{ t.why_h2 }}" class="py-24 px-4 bg-slate-50">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-black text-center mb-12 text-slate-800">
+                    {{ t.why_h2 }}
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {% for item in t.why_items %}
+                    <div class="bg-white border border-slate-200 hover:border-blue-300
+                                hover:shadow-md rounded-2xl p-6 transition-all duration-200">
+                        <div class="text-4xl mb-3">{{ item.icon }}</div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-2">{{ item.title }}</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed">{{ item.desc }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
 
-                            <td class="py-4 px-6">
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="font-semibold text-white">{{ schedule.day_label }}</span>
-                                    {% if schedule.day_of_week == today_num %}
-                                        <span class="bg-cyan-400 text-gray-950 text-xs font-black
-                                                     px-2 py-0.5 rounded-full whitespace-nowrap">
-                                            {{ t.badge }}
+        <!-- ═══════════════════ WEEKLY SCHEDULE ═══════════════════ -->
+        <section aria-label="{{ t.schedule_h2 }}" class="py-24 px-4 bg-white">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-black text-center mb-2 text-slate-800">
+                    {{ t.schedule_h2 }}
+                </h2>
+                <p class="text-slate-500 text-center mb-12">{{ t.schedule_sub }}</p>
+
+                <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200">
+                                <th class="py-4 px-6 text-left text-blue-600 text-xs font-bold tracking-widest uppercase">
+                                    {{ t.col_day }}
+                                </th>
+                                <th class="py-4 px-6 text-left text-blue-600 text-xs font-bold tracking-widest uppercase">
+                                    {{ t.col_operator }}
+                                </th>
+                                <th class="py-4 px-6 text-left text-blue-600 text-xs font-bold tracking-widest uppercase hidden sm:table-cell">
+                                    {{ t.col_phone }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for schedule in schedules %}
+                            <tr class="border-b border-slate-100 last:border-0 transition-colors
+                                       {% if schedule.day_of_week == today_num %}bg-blue-50{% else %}hover:bg-slate-50{% endif %}">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="font-semibold
+                                                     {% if schedule.day_of_week == today_num %}text-blue-700{% else %}text-slate-700{% endif %}">
+                                            {{ schedule.day_label }}
                                         </span>
+                                        {% if schedule.day_of_week == today_num %}
+                                            <span class="bg-blue-600 text-white text-xs font-black
+                                                         px-2 py-0.5 rounded-full whitespace-nowrap">
+                                                {{ t.badge }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-slate-600 font-medium">
+                                    {{ schedule.operator.name|default:"—" }}
+                                </td>
+                                <td class="py-4 px-6 hidden sm:table-cell">
+                                    {% if schedule.operator %}
+                                        <a href="tel:{{ schedule.operator.phone }}"
+                                           class="text-blue-600 hover:text-blue-700 font-mono text-sm transition-colors">
+                                            {{ schedule.operator.phone }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-slate-300">—</span>
                                     {% endif %}
-                                </div>
-                            </td>
-
-                            <td class="py-4 px-6 text-gray-300 font-medium">
-                                {{ schedule.operator.name|default:"—" }}
-                            </td>
-
-                            <td class="py-4 px-6 hidden sm:table-cell">
-                                {% if schedule.operator %}
-                                    <a href="tel:{{ schedule.operator.phone }}"
-                                       class="text-cyan-400 hover:text-cyan-300 font-mono text-sm transition-colors">
-                                        {{ schedule.operator.phone }}
-                                    </a>
-                                {% else %}
-                                    <span class="text-gray-700">—</span>
-                                {% endif %}
-                            </td>
-
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+    </main><!-- /main -->
 
     <!-- ═══════════════════ FOOTER ═══════════════════ -->
-    <footer class="py-12 px-4 text-center border-t border-gray-800">
-        <h3 class="text-2xl font-black mb-1">Cool<span class="text-cyan-400">Fix</span></h3>
-        <p class="text-gray-600 text-sm mt-2">© {% now "Y" %} {{ t.footer_copy }}</p>
+    <footer class="py-12 px-4 text-center bg-slate-900 border-t border-slate-800">
+        <!-- address tag = semantic signal to Google that this is contact info -->
+        <address class="not-italic">
+            <h3 class="text-2xl font-black text-white mb-1">
+                Cool<span class="text-sky-400">Fix</span>
+            </h3>
+            <p class="text-slate-400 text-sm">Бишкек, Кыргызстан</p>
+        </address>
+        <p class="text-slate-500 text-sm mt-3">
+            © {% now "Y" %} {{ t.footer_copy }}
+        </p>
     </footer>
 
 </body>
