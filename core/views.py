@@ -1,9 +1,8 @@
 # core/views.py — full file
 
-from datetime import datetime
+from django.utils import timezone
 from django.http import Http404
 from django.shortcuts import render, redirect
-from .models import DaySchedule
 from .models import DaySchedule
 from django.urls import reverse
 
@@ -430,7 +429,7 @@ def _build_context(lang: str) -> dict:
     """Single source of truth for shared page context (operator card + schedule).
     Reused by home, home_ky, AND service_detail_page — that's the whole point
     of pulling it out into its own function instead of copy-pasting."""
-    today_num = datetime.now().isoweekday()
+    today_num = timezone.localtime().isoweekday()
     schedules = list(
         DaySchedule.objects.select_related("operator").order_by("day_of_week")
     )
