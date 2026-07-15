@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* Жестко указываем Tailwind v4, где искать мои Прекрасные Django-шаблоны */
+@source "../../templates/**/*.html";

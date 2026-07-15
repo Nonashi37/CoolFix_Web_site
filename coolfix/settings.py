@@ -2,21 +2,21 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Находим путь к корню проекта и загружаем .env
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# 1.Очень Секретный ключ
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# 2. DEBUG (Внимание! Окружение возвращает строку, превращаем её в True/False)
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ["*"]
+# 3. ALLOWED_HOSTS (Разбиваем строку через запятую в массив)
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", '').split(',')
 
+# 4. CSRF_TRUSTED_ORIGINS (Тоже делаем массивом)
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 # Application definition
 
@@ -106,4 +106,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Папка, куда Django соберет всю статику проекта для продакшена
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
