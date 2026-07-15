@@ -3,7 +3,8 @@ services:
   web:
     build: .
     volumes:
-      - ./db.sqlite3:/app/db.sqlite3
+      # Заменили файл на папку, чтобы SQLite мог создавать временные файлы-журналы
+      - ./db:/app/db
       - static_files:/app/staticfiles
     env_file: .env
     expose:
