@@ -1,37 +1,10 @@
 services:
-
   web:
     build: .
     volumes:
-      # Заменили файл на папку, чтобы SQLite мог создавать временные файлы-журналы
-      - ./db:/app/db
-      - static_files:/app/staticfiles
+      - ./db.sqlite3:/app/db.sqlite3
+      - ./staticfiles:/app/staticfiles
     env_file: .env
-    expose:
-      - "8000"
-    restart: unless-stopped
-
-  nginx:
-    image: nginx:1.25-alpine
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/coolfix.conf:/etc/nginx/conf.d/default.conf:ro
-      - static_files:/var/www/static:ro
-      - ./certbot/conf:/etc/letsencrypt:ro
-      - ./certbot/www:/var/www/certbot:ro
-    depends_on:
-      - web
+      - "127.0.0.1:8001:8000"
     restart: unless-stopped
-
-  certbot:
-    image: certbot/certbot:latest
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    restart: unless-stopped
-
-volumes:
-  static_files:
