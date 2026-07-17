@@ -2,7 +2,7 @@ services:
   web:
     build: .
     volumes:
-      - ./db.sqlite3:/app/db.sqlite3
+      - ./db:/app/db                  # <-- Теперь монтируем папку db, как хочет settings.py!
       - ./staticfiles:/app/staticfiles
     env_file: .env
     ports:
